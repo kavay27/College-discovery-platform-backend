@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum CollegeType {
+  GOVERNMENT
+  PRIVATE
+  DEEMED
+}
+
+enum CourseLevel {
+  UG
+  PG
+  DOCTORATE
+}
+
+model College {
+  id              Int           @id @default(autoincrement())
+  name            String
+  slug            String        @unique
+  city            String
+  state           String
+  type            CollegeType
+  establishedYear Int?
+  overview        String
+  accreditation   String?
+  rating          Decimal       @db.Decimal(2, 1)
+  averageFees     Int
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  courses         Course[]
+  placement       Placement?
+  reviews         Review[]
+  cutoffs         Cutoff[]
+
+  @@index([city])
+  @@index([state])
+  @@index([rating])
+  @@index([averageFees])
+}
+
+model Course {
+  id          Int         @id @default(autoincrement())
+  collegeId   Int
+  name        String
+  stream      String
+  level       CourseLevel
+  duration    String
+  annualFees  Int
+  totalSeats  Int?
+  college     College     @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@index([stream])
+  @@index([annualFees])
+}
+
+model Placement {
+  id                   Int     @id @default(autoincrement())
+  collegeId            Int     @unique
+  placementRate        Decimal @db.Decimal(5, 2)
+  averagePackageLpa    Decimal @db.Decimal(5, 2)
+  highestPackageLpa    Decimal @db.Decimal(5, 2)
+  topRecruiters        String[]
+  college              College @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+}
+
+model Review {
+  id          Int      @id @default(autoincrement())
+  collegeId   Int
+  authorName  String
+  rating      Decimal  @db.Decimal(2, 1)
+  title       String
+  body        String
+  createdAt   DateTime @default(now())
+  college     College  @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+
+  @@index([rating])
+}
+
+model EntranceExam {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique
+  name        String
+  cutoffs     Cutoff[]
+}
+
+model Cutoff {
+  id              Int          @id @default(autoincrement())
+  collegeId       Int
+  examId          Int
+  courseName      String
+  category        String       @default("GENERAL")
+  openingRank     Int
+  closingRank     Int
+  round           Int          @default(1)
+  college         College      @relation(fields: [collegeId], references: [id], onDelete: Cascade)
+  exam            EntranceExam @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@index([closingRank])
+  @@index([category])
+  @@unique([collegeId, examId, courseName, category, round])
+}
