@@ -119,6 +119,36 @@ Swagger docs:
 GET /api/docs
 ```
 
+## Deployment
+
+This API can be deployed as a Node web service on Render, Railway, or a similar platform.
+
+For Render, use:
+
+```txt
+Build Command: npm install && npm run prisma:generate && npm run build
+Start Command: npm run prisma:deploy && npm run start:prod
+Health Check Path: /api/health
+```
+
+Required environment variable:
+
+```txt
+DATABASE_URL=<hosted-postgresql-connection-string>
+```
+
+After the first deployment, seed the hosted database once:
+
+```bash
+npm run prisma:seed
+```
+
+Public API documentation will be available at:
+
+```txt
+https://your-deployed-service-url/api/docs
+```
+
 ## Backend Highlights
 
 - PostgreSQL-backed data model with Prisma relations
