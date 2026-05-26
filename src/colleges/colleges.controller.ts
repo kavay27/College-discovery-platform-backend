@@ -28,7 +28,8 @@ export class CollegesController {
   @Get('compare')
   @ApiOperation({
     summary: 'Compare colleges',
-    description: 'Compare 2 to 3 colleges side by side by fees, ratings, location, placements, and courses.'
+    description:
+      'Compare 2 to 3 colleges side by side by fees, ratings, location, placements, and courses. Use GET /api/colleges first to find the current college IDs.'
   })
   @ApiOkResponse({ type: CompareCollegesResponseDto })
   @ApiBadRequestResponse({ description: 'College IDs must be valid, unique, and limited to 2-3 IDs.' })

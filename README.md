@@ -107,6 +107,8 @@ Compare colleges:
 GET /api/colleges/compare?ids=1,2,3
 ```
 
+Use `GET /api/colleges?limit=50` to view available college IDs before comparing.
+
 Predictor:
 
 ```txt

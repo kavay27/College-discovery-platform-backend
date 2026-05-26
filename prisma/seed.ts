@@ -422,12 +422,9 @@ const colleges = [
 ];
 
 async function main() {
-  await prisma.cutoff.deleteMany();
-  await prisma.review.deleteMany();
-  await prisma.placement.deleteMany();
-  await prisma.course.deleteMany();
-  await prisma.college.deleteMany();
-  await prisma.entranceExam.deleteMany();
+  await prisma.$executeRawUnsafe(
+    'TRUNCATE TABLE "Cutoff", "Review", "Placement", "Course", "College", "EntranceExam" RESTART IDENTITY CASCADE'
+  );
 
   const exams = await Promise.all(
     [
